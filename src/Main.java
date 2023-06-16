@@ -13,17 +13,9 @@ public class Main {
         };
 
         CoordinateCollection coordCollection = new CoordinateCollection(new Dimension(50, 50), coords);
-        app.renderItem(coordCollection);
+        //-25 is the offset for the spriteSize width and height in half
+        //Currently only works with resizeable windows off
+        Dimension pos = new Dimension(app.WINDOW_POS_CENTER_X-25, app.WINDOW_POS_CENTER_Y-25);
+        app.renderSprite(coordCollection, pos);
     }
-
-//    static void displayWindow(String name){
-//        JFrame jFrame = new JFrame(name);
-//        jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        jFrame.setMinimumSize(new Dimension(700, 500));
-//        jFrame.pack();
-//
-//        JLabel emptyLabel = new JLabel("HI");
-//        jFrame.getContentPane().add(emptyLabel, BorderLayout.CENTER);
-//        jFrame.setVisible(true);
-//    }
 }
