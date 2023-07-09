@@ -9,38 +9,53 @@ public class Window extends JFrame{
 
     int tileSize;
     Dimension defaultSize;
+    JPanel grid;
+
+    Color[] colors = {Color.white, Color.white};
 
     public Window(String name, Dimension size) {
         this.defaultSize = size;
 
         this.setTitle(name);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(size);
         this.setMinimumSize(size);
 
-        this.pack();
         this.setVisible(true);
-        this.setResizable(true);
+        this.setResizable(false);
+        this.pack();
     }
 
     void setColor(Color content, Color bar){
+        this.colors = new Color[]{content, bar};
         this.getContentPane().setBackground(content);
         this.setBackground(bar);
     }
 
-    void renderSprite(CoordinateCollection coordCollection, String name){
+    void renderSprite(CoordinateCollection coordCollection, String name, Window parent){
         Dimension spriteSize = coordCollection.spriteSize;
         Item i = new Item(spriteSize, coordCollection, this);
         i.setName(name);
-        this.add(i);
+        parent.add(i);
+        this.pack();
+    }
+
+    void renderSprite(CoordinateCollection coordCollection, String name, JPanel parent){
+        Dimension spriteSize = coordCollection.spriteSize;
+        Item i = new Item(spriteSize, coordCollection, this);
+        i.setName(name);
+        parent.add(i);
         this.pack();
     }
 
     void initGrid(int tileSize){
-        this.tileSize = tileSize;
+        JPanel grid = new JPanel();
+        grid.setName("System: Grid");
+        grid.setBackground(this.colors[0]);
+        grid.setLayout(new GridLayout(max(getHeight()/tileSize,getWidth()/tileSize), max(getHeight()/tileSize,getWidth()/tileSize), 0, 0));
 
-        this.setLayout(new GridLayout(max(getHeight()/tileSize,getWidth()/tileSize), max(getHeight()/tileSize,getWidth()/tileSize), 0, 0));
-        System.out.println(getHeight() + ":" + getWidth());
+        this.add(grid);
+        this.tileSize = tileSize;
+        this.grid = grid;
         this.pack();
     }
 
@@ -52,27 +67,21 @@ public class Window extends JFrame{
                 new Coordinate(0, this.tileSize),
         };
 
-        CoordinateCollection grid = new CoordinateCollection(new Dimension(this.tileSize, this.tileSize), square);
+        CoordinateCollection gridSquare = new CoordinateCollection(new Dimension(this.tileSize, this.tileSize), square);
         for (int i = 0; i < (getHeight()/this.tileSize); i++) {
             for (int j = 0; j < (getWidth()/this.tileSize); j++) {
-                this.renderSprite(grid, "SYSTEM: tile");
+                this.renderSprite(gridSquare, "SYSTEM: Grid_Tile", this.grid);
             }
         }
+        this.pack();
     }
 
     void clearGrid(){
         Component[] compList = this.getContentPane().getComponents();
         for (Component component: compList) {
-            if (component.getName().contains("SYSTEM: tile")){
+            if (component.getName().contains("System: Grid")){
                 this.remove(component);
             }
         }
-    }
-
-    void resizedPack(){
-        int w = getWidth();
-        int h = getHeight();
-        this.pack();
-        this.setSize(w, h);;
     }
 }
