@@ -1,5 +1,4 @@
 import java.awt.*;
-import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
@@ -9,7 +8,18 @@ public class Main {
         int tileSize = 32;
         app.setColor(new Color(213, 212, 234), new Color(46, 13, 255));
         app.initGrid(tileSize);
-        app.setGrid();
 
+        Coordinate[] fillCoords = {
+                new Coordinate(0,0),
+                new Coordinate(1,1),
+                new Coordinate(7,6),
+                new Coordinate(3,4),
+        };
+
+        for (int i = 0; i < fillCoords.length; i++) {
+            fillCoords[i] = fillCoords[i].convertToGrid(app.getHeight()/tileSize);
+        }
+
+        app.setGrid(fillCoords);
     }
 }

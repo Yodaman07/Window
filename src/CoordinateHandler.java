@@ -12,6 +12,12 @@ class Coordinate {
     public int[] getCoordinate() {
         return new int[]{this.x, this.y};
     }
+
+    Coordinate convertToGrid(int h){
+        //(0,0) --> (0,7)
+        return new Coordinate(x,h-y-1);
+
+    }
 }
 
 class CoordinateCollection{
