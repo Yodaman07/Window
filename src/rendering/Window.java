@@ -1,5 +1,8 @@
+package rendering;
+
 import javax.swing.*;
 import java.awt.*;
+
 
 import static java.lang.Math.max;
 
@@ -23,13 +26,13 @@ public class Window extends JFrame{
         this.pack();
     }
 
-    void setColor(Color content, Color bar){
+    public void setColor(Color content, Color bar){
         this.colors = new Color[]{content, bar};
         this.getContentPane().setBackground(content);
         this.setBackground(bar);
     }
 
-    void renderSprite(CoordinateCollection coordCollection, String name, Window parent, boolean filled){
+    public void renderSprite(CoordinateCollection coordCollection, String name, Window parent, boolean filled){
         Dimension spriteSize = coordCollection.spriteSize;
         Item i = new Item(spriteSize, coordCollection, filled);
         i.setName(name);
@@ -37,7 +40,7 @@ public class Window extends JFrame{
         this.pack();
     }
 
-    void renderSprite(CoordinateCollection coordCollection, String name, JPanel parent, boolean filled){
+    public void renderSprite(CoordinateCollection coordCollection, String name, JPanel parent, boolean filled){
         Dimension spriteSize = coordCollection.spriteSize;
         Item i = new Item(spriteSize, coordCollection, filled);
         i.setName(name);
@@ -45,7 +48,7 @@ public class Window extends JFrame{
         this.pack();
     }
 
-    void initGrid(int tileSize){
+    public void initGrid(int tileSize){
         JPanel grid = new JPanel();
         grid.setName("System: Grid");
         grid.setBackground(this.colors[0]);
@@ -58,9 +61,9 @@ public class Window extends JFrame{
     }
 
 
-    //Coordinate is being used differently here. Instead of being used as a way to draw sprites, it's an x and y coord for the grid
+    //rendering.Coordinate is being used differently here. Instead of being used as a way to draw sprites, it's an x and y coord for the grid
     //unlike positioning of items, the fillGrid method will the bottom left as (0,0) and act as a traditional grid
-    void setGrid(Coordinate[] fillCords){
+    public void setGrid(Coordinate[] fillCords){
         clearGrid();
         boolean match;
         Coordinate[] square = {
@@ -96,7 +99,7 @@ public class Window extends JFrame{
         this.pack();
     }
 
-    void clearGrid(){
+    public void clearGrid(){
         Component[] compList = this.grid.getComponents();
         for (Component component: compList) {
             if (component.getName().contains("System: Grid")){
