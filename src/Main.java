@@ -1,28 +1,23 @@
 import java.awt.*;
-import rendering.*;
+
+import rendering.Coordinate;
 import rendering.Window;
+import rendering.CoordinateCollection;
+import games.*;
 
 
 public class Main {
     public static void main(String[] args) {
         System.out.println("Hello world!");
-        //64 * 8 for scaled graphics (maybe not)
-        Window app = new Window("Awesome window!", new Dimension(256, 256));
-        int tileSize = 32;
-        app.setColor(new Color(213, 212, 234), new Color(46, 13, 255));
-        app.initGrid(tileSize);
+        Window w = new Window("AMAZING WINDOW", new Dimension(512, 512));
+        w.setColor(new Color(213, 212, 234), new Color(46, 13, 255));
+        w.initGrid(32);
 
-        Coordinate[] fillCoords = {
-                new Coordinate(0,0),
-                new Coordinate(1,1),
-                new Coordinate(7,6),
-                new Coordinate(3,4),
+        Coordinate[] coords = {
+                new Coordinate(11,5).convertToGrid(w.getHeight()/32),
+                new Coordinate(3,3).convertToGrid(w.getHeight()/32).setColor(Color.BLUE),
         };
 
-        for (int i = 0; i < fillCoords.length; i++) {
-            fillCoords[i] = fillCoords[i].convertToGrid(app.getHeight()/tileSize);
-        }
-
-        app.setGrid(fillCoords);
+        w.setGrid(coords);
     }
 }

@@ -2,7 +2,7 @@ package rendering;
 
 import java.awt.*;
 
-class CoordinateCollection{
+public class CoordinateCollection{
     Dimension spriteSize;
     Coordinate[] coords;
 

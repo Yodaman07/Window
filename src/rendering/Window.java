@@ -4,7 +4,6 @@ import javax.swing.*;
 import java.awt.*;
 
 
-import static java.lang.Math.max;
 
 public class Window extends JFrame{
 
@@ -32,18 +31,20 @@ public class Window extends JFrame{
         this.setBackground(bar);
     }
 
-    public void renderSprite(CoordinateCollection coordCollection, String name, Window parent, boolean filled){
+    public void renderSprite(CoordinateCollection coordCollection, String name,  Color color, Window parent, boolean filled){
         Dimension spriteSize = coordCollection.spriteSize;
         Item i = new Item(spriteSize, coordCollection, filled);
         i.setName(name);
+        i.setColor(color);
         parent.add(i);
         this.pack();
     }
 
-    public void renderSprite(CoordinateCollection coordCollection, String name, JPanel parent, boolean filled){
+    public void renderSprite(CoordinateCollection coordCollection, String name, Color color, JPanel parent, boolean filled){
         Dimension spriteSize = coordCollection.spriteSize;
         Item i = new Item(spriteSize, coordCollection, filled);
         i.setName(name);
+        i.setColor(color);
         parent.add(i);
         this.pack();
     }
@@ -52,7 +53,8 @@ public class Window extends JFrame{
         JPanel grid = new JPanel();
         grid.setName("System: Grid");
         grid.setBackground(this.colors[0]);
-        grid.setLayout(new GridLayout(max(getHeight()/tileSize,getWidth()/tileSize), max(getHeight()/tileSize,getWidth()/tileSize), 0, 0));
+
+        grid.setLayout(new GridLayout(getHeight()/tileSize, getWidth()/tileSize, 0, 0));
 
         this.add(grid);
         this.tileSize = tileSize;
@@ -66,6 +68,8 @@ public class Window extends JFrame{
     public void setGrid(Coordinate[] fillCords){
         clearGrid();
         boolean match;
+        Color renderColor = Color.BLACK;
+
         Coordinate[] square = {
                 new Coordinate(0, 0),
                 new Coordinate(this.tileSize, 0),
@@ -73,17 +77,39 @@ public class Window extends JFrame{
                 new Coordinate(0, this.tileSize),
         };
 
+        if (fillCords != null){
+            for (Coordinate c:fillCords){
+                //error catching v
+                //X and Y are diff bc convert to grid only mods the y value
+                if ((c.x > (getWidth()/this.tileSize)) || (c.y < 0)){
+                    int fakeY = c.y;
+                    int fakeX = c.x;
+
+                    if (fakeY < 0){ fakeY = ((getHeight()/this.tileSize) - (fakeY + 1)); }
+
+                    if (c.x > (getWidth()/this.tileSize)) {
+                        Coordinate layout = new Coordinate(fakeX, fakeY).convertToLayout((getHeight() / this.tileSize));
+                        fakeY = layout.y;
+                    }
+
+                    throw new RuntimeException("ERROR:OUT OF BOUNDS -> (" + fakeX + "," + fakeY + ")");
+                }
+            }
+        }
+
         CoordinateCollection gridSquare = new CoordinateCollection(new Dimension(this.tileSize, this.tileSize), square);
         for (int y = 0; y < (getHeight()/this.tileSize); y++) {
             for (int x = 0; x < (getWidth()/this.tileSize); x++) {
                 match = false;
                 //j is x-axis and i is y-axis
                 if(fillCords == null) {
-                    this.renderSprite(gridSquare, "SYSTEM: Grid_Tile", this.grid, false);
+                    this.renderSprite(gridSquare, "SYSTEM: Grid_Tile", Color.RED, this.grid, false);
                 }else{
                     for (Coordinate coord:fillCords) {
+
                         match = ((x == coord.x) && (y == coord.y));
                         if (match){
+                            renderColor = coord.color;
                             break;
                         }
                         //More Debug stuff
@@ -92,7 +118,9 @@ public class Window extends JFrame{
 //                        System.out.println(match);
 //                        System.out.println();
                     }
-                    this.renderSprite(gridSquare, "SYSTEM: Grid_Tile", this.grid, match);
+                    this.renderSprite(gridSquare, "SYSTEM: Grid_Tile", renderColor, this.grid, match);
+                    renderColor = Color.BLACK;
+                    //^resets 'renderColor'
                 }
             }
         }

@@ -9,12 +9,17 @@ public class Item extends JComponent {
     Dimension spriteSize;
     CoordinateCollection coordCollection;
     Boolean filled;
+    Color color = Color.BLACK;
 
 
     public Item(Dimension spriteSize, CoordinateCollection coordCollection, Boolean filled) {
         this.spriteSize = spriteSize;
         this.coordCollection = coordCollection;
         this.filled = filled;
+    }
+
+    public void setColor(Color color){
+        this.color = color;
     }
 
     Path2D createPath(CoordinateCollection coordCollection){
@@ -58,8 +63,10 @@ public class Item extends JComponent {
 //        g.fillRect(0,0,50, 50);
 
         if(filled){
+            g.setColor(this.color);
             g.fill(createPath(this.coordCollection));
         }else{
+            g.setColor(this.color);
             g.draw(createPath(this.coordCollection));
         }
     }
