@@ -1,14 +1,12 @@
 package rendering;
 
 import java.awt.*;
+import java.util.Arrays;
 
 public class Coordinate {
     int x;
     int y;
     Color color = Color.BLACK;
-//    public String LAYOUT = "layout";
-//    public String GRID = "grid";
-//    public String type;
 
     public Coordinate(int x, int y) {
         //Everything is initialized as a layout coord
@@ -22,18 +20,18 @@ public class Coordinate {
         }
     }
 
-    public int[] getCoordinate() {
-        return new int[]{this.x, this.y};
+    public String getCoordinate() {
+        return Arrays.toString(new int[]{this.x, this.y});
     }
 
-    public Coordinate convertToGrid(int h){
+    public Coordinate convertToScreen(int h){
         //h is the height of the grid NOT the window
         //(0,0) --> (0,7)
         y = h-y-1;
         return this;
     }
 
-    public Coordinate convertToLayout(int h){
+    public Coordinate convertToGrid(int h){
         y = h-(y+1);
         return this;
     }

@@ -2,7 +2,8 @@ package rendering;
 
 import javax.swing.*;
 import java.awt.*;
-
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class Window extends JFrame{
@@ -12,6 +13,7 @@ public class Window extends JFrame{
     JPanel grid;
 
     Color[] colors = {Color.white, Color.white};
+    List<Coordinate> coords = new ArrayList<Coordinate>();
 
     public Window(String name, Dimension size) {
         this.defaultSize = size;
@@ -41,6 +43,7 @@ public class Window extends JFrame{
     }
 
     public void renderSprite(CoordinateCollection coordCollection, String name, Color color, JPanel parent, boolean filled){
+
         Dimension spriteSize = coordCollection.spriteSize;
         Item i = new Item(spriteSize, coordCollection, filled);
         i.setName(name);
@@ -51,7 +54,7 @@ public class Window extends JFrame{
 
     public void initGrid(int tileSize){
         JPanel grid = new JPanel();
-        grid.setName("System: Grid");
+        grid.setName("SYSTEM: Grid");
         grid.setBackground(this.colors[0]);
 
         grid.setLayout(new GridLayout(getHeight()/tileSize, getWidth()/tileSize, 0, 0));
@@ -68,7 +71,7 @@ public class Window extends JFrame{
     public void setGrid(Coordinate[] fillCords){
         clearGrid();
         boolean match;
-        Color renderColor = Color.BLACK;
+        Color renderColor = Color.GRAY;
 
         Coordinate[] square = {
                 new Coordinate(0, 0),
@@ -88,10 +91,9 @@ public class Window extends JFrame{
                     if (fakeY < 0){ fakeY = ((getHeight()/this.tileSize) - (fakeY + 1)); }
 
                     if (c.x > (getWidth()/this.tileSize)) {
-                        Coordinate layout = new Coordinate(fakeX, fakeY).convertToLayout((getHeight() / this.tileSize));
+                        Coordinate layout = new Coordinate(fakeX, fakeY).convertToGrid((getHeight() / this.tileSize));
                         fakeY = layout.y;
                     }
-
                     throw new RuntimeException("ERROR:OUT OF BOUNDS -> (" + fakeX + "," + fakeY + ")");
                 }
             }
@@ -103,12 +105,13 @@ public class Window extends JFrame{
                 match = false;
                 //j is x-axis and i is y-axis
                 if(fillCords == null) {
-                    this.renderSprite(gridSquare, "SYSTEM: Grid_Tile", Color.RED, this.grid, false);
+                    this.renderSprite(gridSquare, "SYSTEM: Grid_Tile", this.colors[0], this.grid, false);
                 }else{
                     for (Coordinate coord:fillCords) {
 
                         match = ((x == coord.x) && (y == coord.y));
                         if (match){
+                            this.coords.add(coord);
                             renderColor = coord.color;
                             break;
                         }
@@ -119,7 +122,7 @@ public class Window extends JFrame{
 //                        System.out.println();
                     }
                     this.renderSprite(gridSquare, "SYSTEM: Grid_Tile", renderColor, this.grid, match);
-                    renderColor = Color.BLACK;
+                    renderColor = Color.GRAY;
                     //^resets 'renderColor'
                 }
             }
@@ -129,10 +132,50 @@ public class Window extends JFrame{
 
     public void clearGrid(){
         Component[] compList = this.grid.getComponents();
+        //  this.grid.removeAll();
+        //^^ works but im using the other method bc i can delete certain tiles for future purposes. Currently, im clearing everything
+        //https://stackoverflow.com/questions/38349445/how-to-delete-all-components-in-a-jpanel-dynamically
         for (Component component: compList) {
-            if (component.getName().contains("System: Grid")){
-                this.remove(component);
+            if (component.getName().contains("SYSTEM: Grid_Tile")){
+                this.grid.remove(component);
             }
+        }
+        this.grid.revalidate();
+        this.grid.repaint();
+    }
+
+
+    public void addToGrid(Coordinate[] fillCords){
+        boolean dupe = false;
+        int changes = 0;
+        //1. get the current filled spaces and their data
+        //2. validate the coords and merge/delete any if necessary
+        //2. call setGrid and add the new fill coords
+
+
+        for (Coordinate newCoord: fillCords) {
+
+            for (Coordinate storedCoord:this.coords) {
+                if ((newCoord.x == storedCoord.x) && (newCoord.y == storedCoord.y)){
+                    dupe = true;
+                    break;
+                }
+            }
+
+            if (!dupe){
+                this.coords.add(newCoord);
+                changes++;
+            }else{
+                dupe = false;
+            }
+        }
+
+//        System.out.println();
+//        for (Coordinate stored: this.coords) {
+//            System.out.println(stored.getCoordinate());
+//        }
+        if (changes > 0) {
+            this.setGrid(this.coords.toArray(new Coordinate[0]));
         }
     }
 }
